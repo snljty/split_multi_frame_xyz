@@ -1,0 +1,3 @@
+Split multi-frame xyz files to individual files.
+Use command arguments to specify files.
+Without command arguments, the program shows help message and exit.
