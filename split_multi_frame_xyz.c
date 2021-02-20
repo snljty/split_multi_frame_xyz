@@ -20,6 +20,7 @@ int main(int argc, char const *argv[])
     unsigned int const split_index_length = 8;
     unsigned int const symbol_len = strlen("_");
     char print_format[6] = "";
+    char screen_hint_format[30] = "";
 
     if (argc == 1)
     {
@@ -28,6 +29,7 @@ int main(int argc, char const *argv[])
         return 0;
     }
     sprintf(print_format, "%%0%uu", split_index_length);
+    sprintf(screen_hint_format, "Generating for frame %%%uu\r", split_index_length);
     for (i = 1; i < argc; ++ i)
     {
         strcpy(if_name, argv[i]);
@@ -41,12 +43,10 @@ int main(int argc, char const *argv[])
             continue;
         printf("Dealing %s ...\n", if_name);
         j = 1;
-        for (;;)
+        while (! feof(if_p))
         {
             sprintf(of_name + if_name_len - appendix_len + symbol_len, print_format, j);
             strcpy(of_name + if_name_len - appendix_len + symbol_len + split_index_length, ".xyz");
-            if (feof(if_p))
-                break;
             fgets(buf, BUFSIZ, if_p);
             if (sscanf(buf, "%u", & num_atoms) != 1)
                 break;
@@ -61,8 +61,10 @@ int main(int argc, char const *argv[])
             }
             fclose(of_p);
             of_p = NULL;
+            printf(screen_hint_format, j);
             ++ j;
         }
+        puts("");
         fclose(if_p);
         if_p = NULL;
     }
